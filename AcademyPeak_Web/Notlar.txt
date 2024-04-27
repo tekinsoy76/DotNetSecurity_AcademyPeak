@@ -1,0 +1,171 @@
+﻿Tehdit Modellemesi
+
+STRIDE metodolojisi
+
+- Spoofing Identity: Kimlik sahteciligi (Cozum: Token)
+- Tampering with Data: Verilerle oynama (Cozum: Cryptography)
+- Repudiation: Inkar (Cozum: Loglama)
+- Information Disclosure: Bilgi Sizdirma (Cozum: HTTPS, veri sifreleme)
+- Denial of Service: Hizmet Engelleme (Cozum: Filtre, Captcha, Ban List)
+- Elevation of Previlege: Yetki yukseltme (Cozum: Authorization - Policy)
+
+
+Heuristic
+Problem cozme, ogrenme veya kesif icin gereken kurallar anlamina gelir.
+(AntiVirus, Firewall)
+
+Simulation
+Gercek dunya olaylarinin  simulasyonu
+(Penetrasyon testleri, Risk Senaryolari)
+
+Formal Methods
+Belirli tekniklerin kullanilmasi ile, uzmanlar ve/veya servisler tarafindan; sistemin dogru ve guvenli calisip calismadigini dogrulamak icin kullanilan yaklasim.
+
+
+Input and Output Validation
+Model yapilarinda DataAnnotation yapilarini kullanmak, Gerektiginde custom ModelBinder yapilari kullanmak suretiyle gelen-giden verilerin dogrulugunu ve uyumlulugunu garanti altina almak.
+
+
+Common Attacks
+- API Abuse: Bir API'in beklenmedik ve/veya kotu amacli olarak kullanilmasi senaryolari
+	- Kimlik Dogrulama Zaaflari: Cozum: yeterli guvenligin saglandigi Token mekanizmalari (bkz. JWT vb.)
+	- Yetkilendirma Hatalari: Cozum: Role ve Policy yapilari (bkz. WeatherHandler da tanimladigimiz policy vb.)
+	- Girdi Dogrulamasinin eksikligi: Validasyonlar ile verilerin kontrol edilmesi.
+	- Hata Mesajlarinin Asiri Bilgi Icermesi: Kritik bilgilerin disariya sizmasina sebep olabilecek hata mesajlari. Cozum(HTTPstatus Code)
+	- Rate Limiting ve Resource Exhaustion: Sistemin yorulmasi ve/veya mesgule edilerek calismalarin engellenmesi (bkz. RateLimitMiddleware, AttackFilterAttribute, FirewallMiddle)
+	- Guvenli olamaya API endpoint: Test amacli bazi endpointlerin acik birakilmasi
+
+- Buffer Overflow: Bir uygulamanin calistigi server uzerinde kendisine ayrilmis olan tampon (buffer) bolgesinde, bu bolgenin kapasitesinin uzerinde veri olusmasu durumu.
+	- Guvenli Programlama: Veri girislerinin dogrulanmasi, veri boyutlarinin kontrol edilmesi
+	- Guvenlik Guncellemeleri: Kullanilan sistem ve kutuphanelerin guvenlik yamalarinin uygulanmasi
+	- Statik ve Dinamik Analiz Araclari: Kodun statik ve dinamik analizini yaparak potansiyel zaafiyetlerin tespiti
+
+- Memory Spray: Saldirganin bellek bolgesinde buyuk miktarda veri yazarak ve/veya verilerin arasina zararli kod karistirarak, sistemin saglikli isleyisini bozma tesebbusu
+	Cozum: ModelBinder kullanimi, DataAnnotation kullanimi ve diger diger validasyonlar
+
+- Denail of Service: DoS Attack dedigimiz durum: Bir sistemin asiri yuklenme yapilarak, saglikli calismasinin engellenmesi. Cozum: bkz. RateLimitMiddleware, AttackFilterAttribute, FirewallMiddle
+	- Rate Limiting: bkz. RateLimitMiddleware
+	- Resorce Limit: Duzenli kaynak kullanimi (orn: iis ayarlari ve/veya virtual machine ayarlari ile kaynaklari sinirlandirmak)
+	- Timeout Controls: Orn: Web uygulamamaizin API ye ulasmasi esnasinda birikmeler oldugunun tespiti durumunda HttpClient timeout suresinin azaltilmasi
+	- Validation and Trothling: Gelen istek ve verilerin sayi ve boyutunun kontrol edilmesi.
+	- Geological Blocking: Cografi konuma dayali erisim kisitlamasi
+	- Logging and Monitoring: Kayit tutma, bizi arizalarin tespiti konusunda bilgilendirecegi icin onemlidir.
+
+- Previlige Escalation: Bir kullanicinin normalde izin verilenden daha yuksek bir yetki ile zarar verme verme durumu. (bkz. WeatherRequirement ile hazirladigimiz policy vb.)
+	- Kimlik Dogrulama Hatalari: Kimlik dogrulamasinin dogru bir sekilde yapilamamasi (Not: password gibi hassas veriler mutlaka sifrelenmeli)
+	- Yetkilendirme kontrollerinin eksikligi: Bir uygulama belirli islevler yada veriler icin gereken yetkilendirme yapisina sahip olmalidir. Orn: Role, Policy
+	- Ayar Dosyalarinda Sizintilar: Uygulamanin yapilandirma dosyalarinda hassas veriler acik, okunabilir bulundurulmamali (bkz. Web/appsettings.json/DefaultConnection)
+	- Yazilim Hatalari ve Guvenlik Zaaflari:  Ya bizim kodlamamizdan yada direk kullandigimiz teknolojilerden kaynakli guvenlik aciklari
+
+- Format String: Sctring yapilari icerisinde bulnan ozel karakterlerden faydalanarak, sistemin calismasina ve/veya verilerine zarar vermek.
+
+- Hardcoded Credentials: Uygulama icerisine sabit sekilde girilmis degerler veya veriler. (Buradaki ornegimizde, zaman darligi sebebi ve sadece gelistirme ornegi oldugundan; web kisminda ve TokenService de sabit username password yazmamiz vb.)
+
+- Code/Ldap/Command/XML Injection: Kotu niyetli kisi tarafindan bu yapilarin kotu niyetli kullanimi
+	- Code Injection: Bu yapilarin icerisine zararli parcalarin eklenmesi
+	- Command Injection: Bir uygulamanin isletim sistemi komutlari calistirirken, bu komutlarin kontrol edilmemesi
+	- XML Injection: XML yapilarinin icerisinde zararli veri barinmasi
+	- LDAP Injection: Bir uygulamanin sorgularini yaparken hassas girdileri temizlememesi.
+	Cozum: Gelen verinin kontrolu
+
+- Input / Output Validation: Girdi dogrulamasi: Cozum: Dikkatli string kullanimi, DataAnnotation, Validator, ModelBinder
+
+- Improper handling of error messages: Hata mesajlarinin hassas bilgi yansitmamasi gerekliligi.
+
+- Public Vulnurabilities and Exploits: 
+	- SQL Injection: Ornek: SELECT COUNT(1) FROM USER WHERE Username = 'emre' AND Password = '1234'
+	Buradaki emre kelimesi yerine: '' OR 1 = 1 GO DELETE... --
+	Cozum: Ado.Net de parametre kullanilmasi, EF Model kullanilmasi 
+
+	- File Upload Bypass: Dosya yukleme islemlerinin yeterince dogrulanmamais sonucunda ortaya cikan: kotu niyetli kullanicilarin zarar verebilecek dosyalari sisteme sizdirmasi. Cozum: dosyanin kontrolu (bkz. Web/HomeController/UploadFile kisitli ornegi)
+
+	- Cross Site Scripting XXS: Saldirganin sisteme gonderdigi request uzerinden zararli kod gondermesi
+	Cozum: Asp.Net icerisinde zaten olan: Razor zararli scriptleri engeller
+
+	- Parameter Tempering: Gonderilen request in beklenmeyen veriler icermesi. Cozum ornek: Web/Home/UserProfile
+
+	- Cookie poisoning: Bir kullanicinin web uygulamasindaki cookie'leri degistirerek, yetkisiz bilgi elde etmeye yada sisteme zarar vermeye calismasi.
+		Cozum:
+		- Guvenli ve HttpOnly Cookie Ayarlari: Cookie lerin sadece HTTPS uzerinden gonderilebilmesi; ve Cookielerin Javascript gibi client-side yapilar tarafindan degisime kapali olmasi
+		- Encryption: Cookie iceriginin sifrelenmesi
+		- Validasyon: Kullanici tarafindan gelen cookie lerin dogrulanmasi
+		(bkz. Web/Program.cs/builder.Services.Configure<CookiePolicyOptions> ve app.UseCookiePolicy())
+
+	- Input manipulation : (bkz. Input/Output Validation)
+
+	- Buffer Overflow: Bir uygulamanin bellek tamponuna fazla veri yazilmasi: Ornek: Cok yuksek buyuklukte dosya upload'u buna bir ornek olabilir. Cozum: gelen veri yada dosyanin buyuklugunu aldigimiz Action da kontrol etmek.
+
+	- Direct Access Browsing: Kullanicilarin web server uzerindeki dosyalara dogrudan erisiminin olusturdugu tehlike.
+	Cozum:
+		- Static Dosya Erisiminin yapilandirilmasi. (bkz. Web/Program.cs/ satir 72 app.UseStaticFiles)
+		- Web Sunucu Ayarlari: IIS, Apache vb. web sunuculari uzerinden yapilan konfigurasyonlar ile engelleme yapilir.
+		- Dosya ve Dizin erisim izinleri: Isletim sistemi uzerinden yapilan erisim yetki konfigurasyonlari.
+
+	- Local/Remote File Inclusion: Uygulamada kullanicidan dosya adi istenmesi, ve bu veri ile, dosya sistemine uygulamanin erismesi durumu ile ilgili yasanan risk durumu. Kullanicinin bu dosyaya erismesi tehlikesi.
+		Cozum:
+		- Kullanici yetkilendirmesi olmadan yapilmamali.
+		- Dosya Yolu ile sinirlama yapilmali.
+		- Guvenli dosya isleme fonksiyonlarinin kullanilmasi: Path.Combine vb. (Ornegin: kullanicinin dosya ismi olarak: css/ornek.css)
+
+	- CSRF: Bir kullanicinin oturum bilgilerini kullarak, saldirganin sahte bir yapi uzerinden sisteme erisim yapmaya calismasi.
+		Cozum: AntiForgeryToken attribute, ve form icind bulunduracagimiz @Html.AntiForgeryToken()
+
+	- Insecure Configuration Flaws: Config gibi text tabanli dosyalardaki hassas verilere disaridan erisim saglanmasi tehlikesi.
+		Cozum: config, appsettings gibi yapilardaki hassas veriyi encrypt olarak tutmak. (bkz. Web/appsettings/DefaultConnection)
+
+	- Directory traversal: Saldirganin izni olamayan dosya ve dizinleri erismesi.  ( Cozum: bkz. Local/Remote File Inclusion)
+
+	- Handling Exception: Meydana gelen hatalarin kullanici dostu kalmasi yanisira, hata mesaji gibi yollarla hassas verilerin sizmamasi. Hata yonetimi. Cozum filter yada middleware ile kontrol altina alinmasi
+
+	- Data Disclosure: Yazdigimiz uygulamanin hassas verileri paylasmasi: Cozum: paylasmayin.
+
+- Authentication ve Authorization:
+	Authorization (Yetkilendirme):
+	Authorization, doğrulanmış kullanıcılara ne tür işlemleri yapma yetkisi verdiklerini belirleme işlemidir. ASP.NET Core'da yetkilendirme genellikle aşağıdaki yapılar üzerinden yönetilir:
+
+	- Roles (Roller): Kullanıcılar belirli rollere atanır (örneğin admin, kullanıcı) ve bu roller, kullanıcılara çeşitli işlemleri yapma yetkisi verir. (MS Identity)
+	- Policy-Based Authorization: Daha esnek bir yetkilendirme sağlar. Örneğin, belirli bir yaşın üzerindeki kullanıcıların erişimine izin vermek gibi politikalar tanımlanabilir. (bkz. WeatherRequirement ile yaptigimiz ve tanimladigimiz policy)
+	- Claims-Based Authorization: Kullanıcının claim'leri (iddaya), yetkilendirme kararlarında kullanılabilir. (bkz. Token icin tanimladigimiz tckn ornegi)
+
+	Authentication (Kimlik Doğrulama:
+	Authentication, kullanıcıların kim olduklarını doğrulama sürecidir. ASP.NET Core, bu işlemi kolaylaştırmak için çeşitli kimlik doğrulama mekanizmaları sunar:
+
+	- Cookie Authentication: Kullanıcıların kimlik bilgileri doğrulandıktan sonra, bilgileri bir cookie'de saklanır. Kullanıcı sonraki isteklerde bu cookie ile tanınır. (bkz. Web projesinde token yapisi icin hazirladigimiz cookie yapisi)
+	- JWT (JSON Web Tokens): Stateless bir kimlik doğrulama yöntemi olup, token içerisinde kullanıcı bilgileri ve yetkileri şifreli bir şekilde taşınır. (bkz. her iki projede de kullandik)
+	- OAuth 2.0 ve OpenID Connect: Dış servis sağlayıcıları üzerinden kimlik doğrulama yapmak için kullanılır.
+
+Security Development Lifecycle - SDLC
+	Security Assurance Maturity Model - SAMM:
+	"Secure Development Lifecycle" (SDL) kavramı, yazılım geliştirme sürecinin her aşamasında güvenlik önlemlerinin entegrasyonunu ifade eder. Microsoft'un Security Development Lifecycle yaklaşımı bu konuda oldukça bilinen bir örnektir ve güvenlik gereksinimlerini yazılım geliştirme sürecine sistematik bir şekilde dahil etmeyi amaçlar.
+	Ggüvenlik konusunda yazılımcının üzerine düşen bazı sorumluluklar şunlardır:
+	- Veri Doğrulama ve Saldırıdan Koruma: Giriş verilerinin doğrulanması ve uygulamanın SQL injection, XSS, CSRF gibi yaygın saldırılara karşı korunması.
+	- Kimlik Doğrulama ve Yetkilendirme: Kullanıcıların kimliklerinin doğru bir şekilde doğrulanması ve yetkilerinin yönetilmesi.
+	- Güvenlik Konfigürasyonları: Güvenli varsayılan değerlerin kullanılması, konfigürasyon hatalarının önlenmesi.
+	- Güvenli İletişim: Veri iletişiminin şifrelenmesi ve güvenli protokollerin kullanılması.
+
+	Buildeing Security In Maturity Model - BSIMM
+	"Secure Development Lifecycle" (SDL), yazılım geliştirme sürecinde güvenlik konularının entegre edilmesi anlamına gelir. Bu, güvenliği yazılımın başlangıcından itibaren dikkate alarak, potansiyel güvenlik açıklarını azaltmayı ve son kullanıcıların karşılaşabileceği riskleri minimize etmeyi amaçlar. "Building Security In Maturity Model" (BSIMM), organizasyonların güvenlik uygulamalarını değerlendirmelerine ve iyileştirmelerine yardımcı olacak bir çerçevedir. Bu model, gerçek dünya güvenlik girişimlerinden elde edilen verilere dayanarak oluşturulmuştur ve bir dizi güvenlik faaliyeti sunar.
+	- Güvenli Veri Doğrulama: Kullanıcı girdilerinin doğrulaması ve sanitasyonu, güvenlik açıklarını azaltmanın temel adımlarından biridir.
+	- HTTPS Kullanımı: Uygulamanın tamamında HTTPS kullanarak veri bütünlüğü ve gizliliği sağlamak.
+	- Güvenli Kimlik Doğrulama ve Yetkilendirme Mekanizmaları: ASP.NET Core Identity kullanarak güçlü kimlik doğrulama sağlamak.	
+
+Secure Code Ultimate Checklist for Java & .Net
+	Complience with PCI DSS Standart
+	PCI DSS (Payment Card Industry Data Security Standard), ödeme kartı verilerinin güvenliğini sağlamak amacıyla oluşturulan uluslararası bir standarttır. ASP.NET Core kullanarak bu standartlara uygun bir uygulama geliştirirken dikkat edilmesi gereken bazı önemli noktalar şunlardır:
+	- Veri Koruma: Ödeme kartı bilgileri gibi hassas verilerin şifrelenmesi ve korunması gerekmektedir. ASP.NET Core'da bu tür verileri korumak için kullanabileceğiniz bazı yöntemler Data Protection API, HTTPS kullanımı ve güçlü şifreleme algoritmalarını kullanmaktır.
+	- Kimlik Doğrulama ve Yetkilendirme: Kullanıcıların kimlik doğrulaması ve yetkilendirilmesi güvenli bir şekilde yapılmalıdır. ASP.NET Core Identity, kullanıcı yönetimi ve kimlik doğrulama işlemleri için geniş bir framework sağlar.
+	- Güvenlik Konfigürasyonları: Uygulamanızın güvenlik ayarlarını yapılandırırken, güvenlik duvarları, güncellemeler ve yamalar ile ilgili politikaların güncel tutulması gerekmektedir. ASP.NET Core, güvenli varsayılan ayarlar ve geniş yapılandırma seçenekleri sunar.
+	- Günlük Kaydı ve İzleme: Etkinlikleri kaydetmek ve şüpheli davranışları izlemek için günlük kaydı yapılmalıdır. ASP.NET Core, günlük kaydı için Microsoft.Extensions.Logging gibi kütüphaneleri kullanabilir.
+
+	Source Code Analysis Tools
+	1. Fortify
+	Fortify, kaynak kodu statik analiz yoluyla inceleyerek güvenlik açıklarını tespit eder. Asp.Net Core uygulamaları için, öncelikle Fortify SCA (Software Composition Analysis) aracını projeye entegre etmek gereklidir. Bu, bağımlılıkların ve kodun düzenli olarak taranmasını sağlar.
+
+	2. SonarQube
+	SonarQube, kod kalitesini ve güvenliğini artırmak için kullanılan popüler bir araçtır. .Net Core projelerinde, SonarScanner for MSBuild kullanılarak projenin derleme süreci esnasında analiz yapılır. Bu, kod üzerindeki güvenlik açıklarını, kod kokularını ve hataları belirler.
+
+	3. Checkmarx
+	Checkmarx, daha kapsamlı bir güvenlik analizi sunar ve OWASP Top 10 gibi güvenlik standartlarına göre kodunuzu değerlendirir. Checkmarx’i Asp.Net Core projeleriyle kullanmak için, Checkmarx Server’a erişim gereklidir ve projenin kodu buraya yüklenir.
+
+	4. Attackflow
+	Attackflow, özellikle .Net ve Asp.Net projeleri için tasarlanmıştır. Lokal olarak çalışabilen bu araç, entegrasyonu kolaylaştırır ve gerçek zamanlı kod analizi yapar.

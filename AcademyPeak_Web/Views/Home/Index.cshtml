@@ -1,0 +1,50 @@
+﻿@model IEnumerable<AcademyPeak_Web.Models.WeatherModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Hava Durumu</h1>
+@if (ViewBag.Error != null)
+{
+    <p>@ViewBag.Error</p>
+}
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.temperatureC)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.temperatureF)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.summary)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.temperatureC)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.temperatureF)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.summary)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
